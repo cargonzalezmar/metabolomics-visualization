@@ -9,13 +9,7 @@ import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
 
-from modules.load_data import LoadData
-
-
 template = "simple_white"
-results_path = "./results"
-data = LoadData(results_path)
-data.loadConsensus(), data.loadFeatMapsData(), data.loadMSDF()
 
 
 ##############################################################################
@@ -111,12 +105,12 @@ def create_ms1_graph(feat_maps_df):
 ##############################################################################
 
 
-def create_ms2_graph(index_list, sample_name):
+def create_ms2_graph(df, index_list, sample_name):
 
     data_fig = []
     for index in index_list:
-        rt = data.dct_ms_df[sample_name][index]["RT"]
-        mz_int_data = data.dct_ms_df[sample_name][index]["mz_int_data"]
+        rt = df[sample_name][index]["RT"]
+        mz_int_data = df[sample_name][index]["mz_int_data"]
 
         trace = go.Line(
             x = mz_int_data["mz"],
