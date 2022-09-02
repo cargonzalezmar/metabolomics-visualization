@@ -11,8 +11,7 @@ import dash_bio as dashbio
 import plotly.express as px
 from dash import dcc, html
 
-from load_data.load_data import LoadData
-from graphs import *
+from modules.load_data import LoadData
 
 
 template = "simple_white"

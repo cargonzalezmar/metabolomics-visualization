@@ -2,7 +2,7 @@
 
 # Libraries
 
-# datta processing
+# data processing
 import pandas as pd
 import numpy as np
 
@@ -16,8 +16,8 @@ import os
 from glob import glob
 
 
-from load_data.load_data import LoadData
-from graphs.visualizations import *
+from modules.graphs import *
+from modules.load_data import LoadData
 
 from dash import Dash, dcc, html, Input, Output
 import dash_bio as dashbio
@@ -26,7 +26,7 @@ import dash_bio as dashbio
 # dir_actual = os.path.dirname(os.path.abspath(__file__))
 # results_path = separador.join(dir_actual.split(separador)[:-1])
 
-results_path = "./subbset_results"
+results_path = "./results"
 data = LoadData(results_path)
 data.loadConsensus(), data.loadFeatMapsData(), data.loadMSDF()
 
