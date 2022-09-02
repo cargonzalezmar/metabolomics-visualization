@@ -7,9 +7,7 @@ import numpy as np
 
 # visualizations
 import plotly.graph_objects as go
-import dash_bio as dashbio
 import plotly.express as px
-from dash import dcc, html
 
 from modules.load_data import LoadData
 
@@ -25,9 +23,9 @@ data.loadConsensus(), data.loadFeatMapsData(), data.loadMSDF()
 ##############################################################################
 
 
-def init_consensus_graph():   
+def init_consensus_graph(df):   
     fig = px.scatter(
-                    data.consensus_df, 
+                    df, 
                     x="RT", 
                     y="mz",
                     marginal_x="histogram", 

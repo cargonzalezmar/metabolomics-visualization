@@ -1,30 +1,10 @@
 #!/usr/bin/env python
 
-# Libraries
-
-# data processing
-import pandas as pd
-import numpy as np
-
-# visualizations
-import plotly.graph_objects as go
-import plotly.express as px
-
-import re
-
-import os
-from glob import glob
-
-
 from modules.graphs import *
 from modules.load_data import LoadData
 
 from dash import Dash, dcc, html, Input, Output
 import dash_bio as dashbio
-
-# separador = os.path.sep
-# dir_actual = os.path.dirname(os.path.abspath(__file__))
-# results_path = separador.join(dir_actual.split(separador)[:-1])
 
 results_path = "./results"
 data = LoadData(results_path)
