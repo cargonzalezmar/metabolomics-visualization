@@ -98,15 +98,6 @@ def create_ms1_graph(feat_maps_df):
             hover_name = feat_maps_df.index
         )
 
-    # fig.add_trace(
-    #             go.Scatter(
-    #             x=filtered_df["mz"],
-    #             y=filtered_df["intensity"],
-    #             mode='markers',
-    #             marker=dict(color="rgb(255,255,255)", line=dict(width=1, color='Grey'))
-    #         ))
-
-
     fig.update_layout(
             showlegend=False,
             title_text=f"mz vs intensity", 
@@ -151,7 +142,7 @@ def create_ms2_graph(index_list, sample_name):
     return 
 
 ##############################################################################
-#############                   MS2 USEFULL       #####################
+#############                   MS2 2       #####################
 ##############################################################################
 
 def create_ms2_graph2(index_list, sample_name):
@@ -160,7 +151,6 @@ def create_ms2_graph2(index_list, sample_name):
     for index in index_list:
         rt = data.dct_ms_df[sample_name][index]["RT"]
         mz_int_data = data.dct_ms_df[sample_name][index]["mz_int_data"]
-        mz_int_data[0]=0
         for i in mz_int_data.index:
             trace = go.Scatter(
                     x = [mz_int_data["mz"][i], mz_int_data["mz"][i]],
