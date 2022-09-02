@@ -7,7 +7,7 @@ from modules.load_data import LoadData
 from dash import Dash, dcc, html, Input, Output
 import dash_bio as dashbio
 
-results_path = "./results"
+results_path = "./subset_results"
 data = LoadData(results_path)
 data.loadConsensus(), data.loadFeatMapsData(), data.loadMSDF()
 
@@ -28,6 +28,10 @@ init_cons_fig = init_consensus_graph(data.consensus_df)
 app = Dash(__name__)
 
 app.layout = html.Div(children=[
+            
+                html.Div([html.H1(children='Metabolomic Visualization', id='title')
+                ]),
+
                 html.Div([
                     dcc.Dropdown(
                         id="samples_dropdown",
