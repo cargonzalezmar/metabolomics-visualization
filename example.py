@@ -6,7 +6,7 @@ from dash.dependencies import Input, Output
 app = Dash(__name__)
 
 app.layout = html.Div(
-                [html.Div([html.H1(children='Metabolomic Visualization', id='title')],
+                [html.Div([html.H1(children='Metabolomic Visualization', id='title'), html.P("Paragraph in smaller letters...")],
                 id='header')]
             )
 
