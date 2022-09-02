@@ -1,11 +1,5 @@
 #!/usr/bin/env python
-# Libraries
 
-# datta processing
-import pandas as pd
-import numpy as np
-
-# visualizations
 import plotly.graph_objects as go
 import plotly.express as px
 
@@ -132,36 +126,3 @@ def create_ms2_graph(df, index_list, sample_name):
 
     return 
 
-##############################################################################
-#############                   MS2 2       #####################
-##############################################################################
-
-def create_ms2_graph2(index_list, sample_name):
-
-    data_fig = []
-    for index in index_list:
-        rt = data.dct_ms_df[sample_name][index]["RT"]
-        mz_int_data = data.dct_ms_df[sample_name][index]["mz_int_data"]
-        for i in mz_int_data.index:
-            trace = go.Scatter(
-                    x = [mz_int_data["mz"][i], mz_int_data["mz"][i]],
-                    y = [0, mz_int_data["intensity"][i]], mode='lines',
-                    line=dict(color='#000000',
-                        width=1),
-                    showlegend=False
-                )
-            data_fig.append(trace)
-
-    fig = go.Figure(data_fig)
-
-    
-    fig.update_layout(
-        template=template, 
-        title="MS2",
-        legend_title="Retention Time",
-        title_text= f"MZ vs intensity {sample_name}", 
-        title_x=0.5,
-        height=500, width=900,
-        )
-
-    return fig
