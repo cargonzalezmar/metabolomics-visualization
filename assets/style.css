@@ -3,7 +3,7 @@
   src: URL('VarelaRound-Regular.ttf') format('truetype');
 }
 
-html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, footer, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
   margin:0;
   padding:0;
   border:0;
@@ -15,11 +15,50 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
 } 
 
 #title {
-    margin-top: 20px;
+    margin-top: 10px;
     font-size: 50px;
-    color: rgb(0, 255, 115);
+    color: rgb(11, 36, 84);
     text-align: 'left';
-    font-family:'Varela Round';
-    background-color: rgb(219, 162, 224);
+    font-family:'Varela Round'; 
 }
+
+#logo{
+    margin-top: 5px;
+    height: 50px;
+    width: 50px;
+}
+
+#left-header{
+    width: 95%;
+}
+
+#right-header{
+    width: 5%;
+    text-align: 'right';
+}
+
+#header{
+    background-color: rgb(206, 238, 244);
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+#ms1_spectra{
+    width: 50%;
+}
+
+#footer{
+    font-family:'Varela Round';
+    background-color: rgb(206, 238, 244);
+    font-size: 13px;
+    height: 40px;
+    color: rgb(94, 104, 104);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
 
