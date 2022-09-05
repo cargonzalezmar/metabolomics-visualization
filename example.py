@@ -24,6 +24,30 @@ features = {sample: pd.read_pickle(os.path.join(results_directory, "feature_map_
 sample_dict = [dict(label=x, value=x) for x in samples]
 sample_dict.append({'label':'All Samples', 'value':'All Samples'})
 
+def plot_ms_spectrum(df_spectrum, title):
+    """
+    Takes a pandas Dataframe with one row (spectrum) and generates a needle plot with m/z and intensity dimension.
+    """
+    def create_spectra(x,y, zero=0):
+        x=np.repeat(x,3)
+        y=np.repeat(y,3)
+        y[::3]=y[2::3]=zero
+        return x,y
+
+    x,y = create_spectra(df_spectrum['mzarray'].tolist()[0], df_spectrum['intarray'].tolist()[0])
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=df_spectrum['mzarray'].tolist()[0], y=df_spectrum['intarray'].tolist()[0], mode='markers', marker={'size':0.1}))
+    fig.add_trace(go.Scatter(x=x,y=y, line={'color':'#555555'}, hoverinfo='none', ))
+    fig.update_traces(showlegend=False)
+    fig.update_layout(
+        showlegend=False,
+        title_text=title,
+        xaxis_title="m/z",
+        yaxis_title="intensity"
+    )
+    return fig
+
 app = Dash(__name__)
 
 app.layout = html.Div([html.Div([html.Div([html.H1(children='Metabolomic Visualization', id='title'),
@@ -52,7 +76,8 @@ app.layout = html.Div([html.Div([html.Div([html.H1(children='Metabolomic Visuali
                                         ), className="panel-item-right-40")
                                 ], className="dual-panel-60-40"),
                                 html.H2(children="MS1 data", className="subtitle"),
-                                html.Div([dcc.Graph(id="BPC", className="panel-item-left")], id='ms1-panel', className="dual-panel"),
+                                html.Div([dcc.Graph(id="BPC", className="panel-item-left"),
+                                        dcc.Graph(id="ms1-spectra", className="panel-item-right")], id='ms1-panel', className="dual-panel"),
                                 html.H2(children="MS2 data", className="subtitle"),
                                 html.Div([dcc.Graph(id="ms2-scatter-plot", className="panel-item-left"), 
                                         dcc.Graph(id="ms2-spectrum", className="panel-item-right")], id='ms2-panel', className="dual-panel")
@@ -74,7 +99,7 @@ def update(sample_name):
         fig = create_consensus_graph(df1, df2, sample_name)
     return fig
 
-# draw PC of selected sample
+# draw BPC of selected sample
 @app.callback(Output("BPC", "figure"), [Input("samples_dropdown", "value")])
 def update(sample):
     if sample=="All Samples":
@@ -82,8 +107,20 @@ def update(sample):
     if sample == "all":
         return {}
     df_ms1 = spectra[sample].loc[spectra[sample]["mslevel"] == 1]
-    fig = px.line(df_ms1, x="RT", y=[max(intensity_array) for intensity_array in df_ms1["intarray"]], title=f"{sample} BPC")
+    fig = px.line(df_ms1, x="RT", y=[max(intensity_array) for intensity_array in df_ms1["intarray"]], title=f"{sample} BPC", labels={"y": "intensity (cps)"})
+    fig.data[0].update(mode='markers+lines', marker_symbol="x", marker=dict(color="orange"))
     return fig
+
+@app.callback(Output("ms1-spectra", "figure"), [Input("samples_dropdown", "value"), Input("BPC", "clickData")])
+def update(sample, clickData):
+    if sample=="All Samples":
+        return go.Figure()
+    if clickData:
+        df_ms1 = spectra[sample].loc[spectra[sample]["mslevel"] == 1]
+        df_spectrum = df_ms1.loc[df_ms1["RT"] == clickData["points"][0]["x"]]
+        return plot_ms_spectrum(df_spectrum, sample + " MS1 @" + str(round(clickData["points"][0]["x"])) + " s")
+    else:
+        return go.Figure()
 
 # draw scatter plot of MS2 precursors
 @app.callback(Output("ms2-scatter-plot", "figure"), [Input("samples_dropdown", "value")])
@@ -91,37 +128,20 @@ def update(sample):
     if sample=="All Samples":
         return go.Figure()
     df_ms2 = spectra[sample].loc[spectra[sample]["mslevel"] == 2]
-    fig = px.scatter(df_ms2, x="RT", y="precursors", title=f"{sample} MS2 precursors")
+    fig = px.scatter(df_ms2, x="RT", y="precursors", title=f"{sample} MS2 precursors", labels={"y": "precursor m/z"})
     fig.update_traces(marker=dict(color="orange"))
+    fig.update_layout(yaxis={"title": "precursor m/z"})
     return fig
 
 # draw MS2 spectrum on hover of ms2-scatter-plot
-@app.callback(Output("ms2-spectrum", "figure"), [Input("samples_dropdown", "value"), Input("ms2-scatter-plot", "hoverData")])
-def update(sample, hoverData):
+@app.callback(Output("ms2-spectrum", "figure"), [Input("samples_dropdown", "value"), Input("ms2-scatter-plot", "clickData")])
+def update(sample, clickData):
     if sample=="All Samples":
         return go.Figure()
-
-    if hoverData:
+    if clickData:
         df_ms2 = spectra[sample].loc[spectra[sample]["mslevel"] == 2]
-        df_spectrum = df_ms2.loc[df_ms2["RT"] == hoverData["points"][0]["x"]]
-
-        def create_spectra(x,y, zero=0):
-            x=np.repeat(x,3)
-            y=np.repeat(y,3)
-            y[::3]=y[2::3]=zero
-            return x,y
-
-        x,y = create_spectra(df_spectrum['mzarray'].tolist()[0], df_spectrum['intarray'].tolist()[0])
-
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(x=df_spectrum['mzarray'].tolist()[0], y=df_spectrum['intarray'].tolist()[0], mode='markers', marker={'size':0.1}))
-        fig.add_trace(go.Scatter(x=x,y=y, line={'color':'black'}, hoverinfo='none', ))
-        fig.update_traces(showlegend=False)
-        fig.update_layout(
-            showlegend=False,
-            title_text=sample + " MS2 @" + str(round(hoverData["points"][0]["x"])) + " s @" + str(round(hoverData["points"][0]["y"], 5)) + " precursor m/z"
-        )
-        return fig
+        df_spectrum = df_ms2.loc[df_ms2["RT"] == clickData["points"][0]["x"]]
+        return plot_ms_spectrum(df_spectrum, sample + " MS2 @" + str(round(clickData["points"][0]["x"])) + " s @" + str(round(clickData["points"][0]["y"], 5)) + " precursor m/z")
     else:
         return go.Figure()
 
