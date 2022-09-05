@@ -3,6 +3,7 @@
 import plotly.graph_objects as go
 import plotly.express as px
 
+
 template = "simple_white"
 
 
@@ -27,9 +28,7 @@ def init_consensus_graph(df):
                     title_text=f"RT vs MZ", 
                     title_x=0.5
                 )
-
     return fig
-
 
 def create_consensus_graph(df1, df2, sample_name):
 
@@ -69,10 +68,7 @@ def create_consensus_graph(df1, df2, sample_name):
 ##############################################################################
 
 
-def create_ms1_graph(feat_maps_df):
-    
-    # cond_to_filter = feat_maps_df["MS2_spectra_array"].apply(lambda x: len(x)>0)
-    # filtered_df = feat_maps_df[cond_to_filter]
+def create_feature_graph(feat_maps_df):
 
     fig = px.line(
             feat_maps_df, 
