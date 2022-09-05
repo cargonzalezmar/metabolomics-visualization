@@ -17,15 +17,15 @@ def init_consensus_graph(df):
                     df, 
                     x="RT", 
                     y="mz",
-                    marginal_x="histogram", 
-                    marginal_y="histogram",
-                    height=600, width=800,
+                    marginal_x="violin", 
+                    marginal_y="violin",
+                    # height=600, width=800,
                     template=template
                 )
 
     fig.update_layout(
                     showlegend=False,
-                    title_text=f"RT vs MZ", 
+                    #title_text=f"RT vs MZ", 
                     title_x=0.5
                 )
     return fig
@@ -36,10 +36,10 @@ def create_consensus_graph(df1, df2, sample_name):
                 df1, 
                 x="RT", 
                 y="mz",
-                marginal_x="histogram", 
-                marginal_y="histogram", 
+                marginal_x="violin", 
+                marginal_y="violin", 
                 color=sample_name,
-                height=600, width=800,
+                # height=600, width=800,
                 template=template
             )
 
@@ -54,7 +54,7 @@ def create_consensus_graph(df1, df2, sample_name):
 
     fig.update_layout(
                     showlegend=False,
-                    title_text=f"RT vs MZ by intensity on {sample_name}", 
+                    # title_text=f"RT vs MZ by intensity on {sample_name}", 
                     title_x=0.5
                 )
 

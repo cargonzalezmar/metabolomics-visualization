@@ -27,32 +27,30 @@ sample_dict.append({'label':'All Samples', 'value':'All Samples'})
 app = Dash(__name__)
 
 app.layout = html.Div([html.Div([html.Div([html.H1(children='Metabolomic Visualization', id='title'),
-                                           html.P(children="Holiiiii Axeeeeel!!!!")],
+                                           html.P(children=" Holiiiii Axeeeeel!!!!")],
                                            id='left-header'), 
                                  html.A([html.Img(src='./assets/git.png', id='logo'),
                                          html.P(children="GitHub")],
                                         href='https://github.com/cargonzalezmar/metabolomics-visualization',
-                                        id='right-header')],
-                                id='header'),
-                      html.Div([dcc.Dropdown(options=sample_dict, id='samples_dropdown', value=samples[0]),
-                                dcc.Graph(id='ms1_spectra'),
-                                        id='header'),
-                      html.Div([dcc.Dropdown(options=sample_dict, id='samples_dropdown', value='All Samples'),
-                      
-                                dcc.Graph(id='consensus_graph'),
-                                dcc.Graph(id='feature_spectra'),
-                                dcc.Graph(figure=dashbio.Clustergram(
-                                    data=consensus[samples].loc[list(consensus[samples].index)].values,
-                                    column_labels=samples,
-                                    row_labels=list(consensus[samples].index),
-                                    color_threshold={
-                                    'row': 250,
-                                    'col': 700
-                                    },
-                                    hidden_labels='row',
-                                    height=800,
-                                    width=700
-                                    )),
+                                        id='right-header')], id='header'),
+                      html.Div([html.Br(),
+                                dcc.Dropdown(options=sample_dict, id='samples_dropdown', value='All Samples'),
+                                html.Br(),
+                                html.H2(children=" Consensus features", className="subtitle"),
+                                html.Div([
+                                    dcc.Graph(id='consensus_graph', className="panel-item-left-60"),
+                                    dcc.Graph(figure=dashbio.Clustergram(
+                                        data=consensus[samples].loc[list(consensus[samples].index)].values,
+                                        column_labels=samples,
+                                        row_labels=list(consensus[samples].index),
+                                        color_map="viridis",
+                                        color_threshold={
+                                        'row': 250,
+                                        'col': 700
+                                        },
+                                        hidden_labels='row',
+                                        ), className="panel-item-right-40")
+                                ], className="dual-panel-60-40"),
                                 html.H2(children="MS1 data", className="subtitle"),
                                 html.Div([dcc.Graph(id="BPC", className="panel-item-left")], id='ms1-panel', className="dual-panel"),
                                 html.H2(children="MS2 data", className="subtitle"),
@@ -67,7 +65,7 @@ app.layout = html.Div([html.Div([html.Div([html.H1(children='Metabolomic Visuali
 @app.callback(
     Output("consensus_graph", "figure"), 
     [Input("samples_dropdown", "value")])
-def update_consensus_graph(sample_name):
+def update(sample_name):
     if sample_name=='All Samples':
         fig = init_consensus_graph(consensus)
     else:
@@ -76,17 +74,11 @@ def update_consensus_graph(sample_name):
         fig = create_consensus_graph(df1, df2, sample_name)
     return fig
 
-@app.callback(
-    Output("feature_spectra", "figure"), 
-    [Input("samples_dropdown", "value")])
-def update_ms1_graph(sample_name): 
-    feat_maps_df = features[sample_name].sort_values(by='mz')
-    fig = create_feature_graph(feat_maps_df)
-    return fig
-
 # draw PC of selected sample
 @app.callback(Output("BPC", "figure"), [Input("samples_dropdown", "value")])
 def update(sample):
+    if sample=="All Samples":
+        return go.Figure()
     if sample == "all":
         return {}
     df_ms1 = spectra[sample].loc[spectra[sample]["mslevel"] == 1]
@@ -96,8 +88,8 @@ def update(sample):
 # draw scatter plot of MS2 precursors
 @app.callback(Output("ms2-scatter-plot", "figure"), [Input("samples_dropdown", "value")])
 def update(sample):
-    if sample == "all":
-        return {}
+    if sample=="All Samples":
+        return go.Figure()
     df_ms2 = spectra[sample].loc[spectra[sample]["mslevel"] == 2]
     fig = px.scatter(df_ms2, x="RT", y="precursors", title=f"{sample} MS2 precursors")
     fig.update_traces(marker=dict(color="orange"))
@@ -106,6 +98,9 @@ def update(sample):
 # draw MS2 spectrum on hover of ms2-scatter-plot
 @app.callback(Output("ms2-spectrum", "figure"), [Input("samples_dropdown", "value"), Input("ms2-scatter-plot", "hoverData")])
 def update(sample, hoverData):
+    if sample=="All Samples":
+        return go.Figure()
+
     if hoverData:
         df_ms2 = spectra[sample].loc[spectra[sample]["mslevel"] == 2]
         df_spectrum = df_ms2.loc[df_ms2["RT"] == hoverData["points"][0]["x"]]
